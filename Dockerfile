@@ -4,14 +4,14 @@ WORKDIR /app
 
 # Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r ./scripts/requirements.txt
 
 # Copy only essential application files
 COPY scripts/ ./scripts/
-COPY pipelines/ ./pipelines/
+# COPY pipelines/ ./pipelines/
 COPY pyproject.toml .
 
 # Set the Python path to include the current directory
 ENV PYTHONPATH=/app
 
-CMD ["python", "-m", "scripts.cli"]
+CMD ["bash"]
