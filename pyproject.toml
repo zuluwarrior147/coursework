@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml-coursework"
+version = "0.1.0"
+description = "Machine learning coursework with data loading and processing utilities"
+requires-python = ">=3.8"
+authors = [
+    {name = "Andrii Markovych", email = "andrii.markovych@gmail.com"}
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.8"
+]
+dependencies = [
+    "pandas>=2.0.0",
+    "requests>=2.25.0",
+    "typer>=0.7.0",
+    "scikit-learn>=1.0.0",
+    "xgboost>=1.5.0",
+    "numpy>=1.21.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "isort>=5.10.0",
+]
+
+[project.scripts]
+load-datasets = "scripts.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scripts*", "pipelines*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "-v",
+    "--cov=scripts",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
+    "--tb=short"
+]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["scripts", "pipelines"]
+omit = ["tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]
+show_missing = true
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 88 
