@@ -7,6 +7,7 @@ import typer
 from urllib.parse import urlparse
 
 def load_all_datasets(data_path: str = typer.Option("data")):
+    os.makedirs(data_path, exist_ok=True)
     datasets = [('https://datasets.imdbws.com/title.crew.tsv.gz', ['tconst', 'directors'], f"{data_path}/directors.csv"),
                 ('https://datasets.imdbws.com/title.principals.tsv.gz', ['tconst', 'nconst', 'category', 'job', 'characters'], f"{data_path}/crew.csv"),
                 ('https://datasets.imdbws.com/title.basics.tsv.gz', ['tconst', 'titleType', 'primaryTitle', 'startYear', 'genres'], f"{data_path}/basic_titles.csv"),

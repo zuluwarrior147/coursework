@@ -286,7 +286,7 @@ class TestLoadAllDatasets:
     @patch.object(DatasetLoader, 'process')
     def test_default_data_path(self, mock_process):
         """Test load_all_datasets with default data path"""
-        load_all_datasets()
+        load_all_datasets("data")
         assert mock_process.call_count == 4
     
     @patch.object(DatasetLoader, 'process')
