@@ -1,0 +1,55 @@
+# airflow-values.yaml
+
+executor: "KubernetesExecutor"
+
+# Where to put Airflow metadata
+postgresql:
+  enabled: true
+  postgresqlDatabase: airflow
+  postgresqlUsername: airflow
+  postgresqlPassword: airflowpassword
+
+# Redis for Celery (unused if KubernetesExecutor)
+redis:
+  enabled: false
+
+serviceAccount:
+  create: false
+  name: airflow-k8s-sa
+
+workers:
+  annotations:
+    iam.gke.io/gcp-service-account: airflow-sa@${PROJECT_ID}.iam.gserviceaccount.com
+
+webserver:
+  annotations:
+    iam.gke.io/gcp-service-account: airflow-sa@${PROJECT_ID}.iam.gserviceaccount.com
+
+scheduler:
+  annotations:
+    iam.gke.io/gcp-service-account: airflow-sa@${PROJECT_ID}.iam.gserviceaccount.com
+
+
+namespace: airflow
+
+logs:
+  persistLogs: true
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    size: 5Gi
+
+dags:
+  persistence:
+    enabled: true
+    existingClaim: "coursework-storage"
+    subPath: "dags"
+    size: 1Gi
+
+extraVolumes:
+  - name: coursework-storage
+    persistentVolumeClaim:
+      claimName: coursework-storage
+extraVolumeMounts:
+  - name: coursework-storage
+    mountPath: /tmp
