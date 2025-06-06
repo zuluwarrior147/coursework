@@ -51,6 +51,28 @@ with DAG(
         volume_mounts=[volume_mount],
     )
 
+    upload_data = KubernetesPodOperator(
+        name="upload_data",
+        image=SCRIPTS_IMAGE,
+        cmds=[
+            "python",
+            "scripts/cli.py",
+            "upload",
+            "--bucket-name",
+            "coursework-imdb",
+            "--data-path",
+            "/tmp/data",
+        ],
+        task_id="upload_data",
+        in_cluster=False,
+        is_delete_operator_pod=False,
+        namespace="default",
+        startup_timeout_seconds=600,
+        image_pull_policy="Always",
+        volumes=[volume],
+        volume_mounts=[volume_mount],
+    )
+
     run_spark_script = KubernetesPodOperator(
         name="run_spark_script",
         image=SPARK_IMAGE,
@@ -65,27 +87,27 @@ with DAG(
         volume_mounts=[volume_mount],
     )
 
-    # upload_data = KubernetesPodOperator(
-    #     name="upload_data",
-    #     image=DOCKER_IMAGE,
-    #     cmds=[
-    #         "python",
-    #         "scripts/cli.py",
-    #         "upload",
-    #         "--bucket-name",
-    #         "coursework-storage",
-    #         "--data-path",
-    #         "/tmp/data",
-    #     ],
-    #     task_id="upload_data",
-    #     in_cluster=False,
-    #     is_delete_operator_pod=False,
-    #     namespace="default",
-    #     startup_timeout_seconds=600,
-    #     image_pull_policy="Always",
-    #     volumes=[volume],
-    #     volume_mounts=[volume_mount],
-    # )
+    summarize_movies = KubernetesPodOperator(
+        name="summarize_movies",
+        image=SCRIPTS_IMAGE,
+        cmds=[
+            "python",
+            "scripts/cli.py",
+            "summarize",
+            "--data-path",
+            "/tmp/data/processed/top_rated_weighted.csv",
+            "--output-path",
+            "/tmp/data/processed/enhanced.json",
+        ],
+        task_id="summarize_movies",
+        in_cluster=False,
+        is_delete_operator_pod=False,
+        namespace="default",
+        startup_timeout_seconds=600,
+        image_pull_policy="Always",
+        volumes=[volume],
+        volume_mounts=[volume_mount],
+    )
 
     clean_up = KubernetesPodOperator(
         name="clean_up",
@@ -102,4 +124,4 @@ with DAG(
         trigger_rule="all_done",
     )
 
-    clean_storage_before_start >> load_data >> run_spark_script >> clean_up
+    clean_storage_before_start >> load_data >> run_spark_script >> summarize_movies >> clean_up

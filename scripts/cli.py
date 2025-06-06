@@ -8,6 +8,7 @@ sys.path.insert(0, str(project_root))
 
 from scripts.loader import load_all_datasets
 from scripts.uploader import upload_all_datasets
+from scripts.summarizer import summarize_dataset
 
 app = typer.Typer(help="ML Coursework Data Loading CLI")
 
@@ -40,6 +41,17 @@ def upload(
 def version():
     """Show version information."""
     typer.echo("ML Coursework CLI v0.1.0")
+
+@app.command()
+def summarize(data_path: str = typer.Option("data/processed/top_rated_weighted.csv", help="Path to the dataset"),
+              output_path: str = typer.Option("data/processed/enhanced.json", help="Path to the output file")):
+    typer.echo(f"Getting summaries for {data_path}")
+    try:
+        summarize_dataset(data_path, output_path)
+        typer.echo("Dataset summarized successfully!")
+    except Exception as e:
+        typer.echo(f"Error summarizing datasets: {e}")
+        raise typer.Exit(1)
 
 if __name__ == "__main__":
     app()

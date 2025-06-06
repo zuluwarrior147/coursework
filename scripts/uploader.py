@@ -11,8 +11,8 @@ def upload_all_datasets(
 ):
     """Upload all processed IMDB datasets to Google Cloud Storage bucket."""
     dataset_files = [
-        "directors.csv",
-        "crew.csv", 
+        # "directors.csv",
+        # "crew.csv", 
         "basic_titles.csv",
         "ratings.csv"
     ]
