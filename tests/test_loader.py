@@ -287,13 +287,13 @@ class TestLoadAllDatasets:
     def test_default_data_path(self, mock_process):
         """Test load_all_datasets with default data path"""
         load_all_datasets("data")
-        assert mock_process.call_count == 4
+        assert mock_process.call_count == 2
     
     @patch.object(DatasetLoader, 'process')
     def test_custom_data_path(self, mock_process):
         """Test load_all_datasets with custom data path"""
         load_all_datasets("custom_data")
-        assert mock_process.call_count == 4
+        assert mock_process.call_count == 2
     
     @patch.object(DatasetLoader, '__init__', return_value=None)
     @patch.object(DatasetLoader, 'process')
@@ -301,13 +301,13 @@ class TestLoadAllDatasets:
         """Test correct dataset URLs and parameters"""
         load_all_datasets("test_data")
         
-        assert mock_init.call_count == 4
+        assert mock_init.call_count == 2
         
         # Verify first dataset parameters
         first_call = mock_init.call_args_list[0]
-        assert first_call[0][0] == 'https://datasets.imdbws.com/title.crew.tsv.gz'
-        assert first_call[0][1] == ['tconst', 'directors']
-        assert first_call[0][2] == 'test_data/directors.csv'
+        assert first_call[0][0] == 'https://datasets.imdbws.com/title.basics.tsv.gz'
+        assert first_call[0][1] == ['tconst', 'titleType', 'primaryTitle', 'startYear', 'genres']
+        assert first_call[0][2] == 'test_data/basic_titles.csv'
 
 
 class TestIntegrationWorkflow:

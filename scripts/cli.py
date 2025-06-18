@@ -7,7 +7,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from scripts.loader import load_all_datasets
-from scripts.uploader import upload_all_datasets
+from scripts.gc_uploader import upload_all_datasets
 from scripts.summarizer import summarize_dataset
 
 app = typer.Typer(help="ML Coursework Data Loading CLI")
