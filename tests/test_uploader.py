@@ -10,8 +10,7 @@ import tempfile
 import shutil
 from unittest.mock import Mock, patch, MagicMock
 from google.cloud.exceptions import GoogleCloudError
-
-from scripts.uploader import GCSUploader, upload_all_datasets
+from scripts.gc_uploader import GCSUploader, upload_all_datasets
 
 
 @pytest.fixture
@@ -40,7 +39,7 @@ def sample_files(temp_dir):
 @pytest.fixture
 def mock_gcs_client():
     """Create a mock GCS client"""
-    with patch('scripts.uploader.storage.Client') as mock_client_class:
+    with patch('scripts.gc_uploader.storage.Client') as mock_client_class:
         mock_client = Mock()
         mock_bucket = Mock()
         mock_blob = Mock()
@@ -81,7 +80,7 @@ class TestGCSUploader:
     
     def test_init_client_failure(self):
         """Test GCS client initialization failure"""
-        with patch('scripts.uploader.storage.Client') as mock_client:
+        with patch('scripts.gc_uploader.storage.Client') as mock_client:
             mock_client.side_effect = Exception("Auth failed")
             
             uploader = GCSUploader("test-bucket")
@@ -212,19 +211,19 @@ class TestUploadAllDatasets:
         """Test uploading all datasets when all files exist"""
         upload_all_datasets("test-bucket", temp_dir)
         
-        # Should attempt to upload all 4 files
-        assert mock_upload.call_count == 4
+        # Should attempt to upload all 2 files
+        assert mock_upload.call_count == 2
         
         # Verify file names passed to upload
         uploaded_files = [call[0][1] for call in mock_upload.call_args_list]
-        expected_files = ["directors.csv", "crew.csv", "basic_titles.csv", "ratings.csv"]
+        expected_files = ["basic_titles.csv", "ratings.csv"]
         assert set(uploaded_files) == set(expected_files)
     
     @patch.object(GCSUploader, 'upload_file')
     def test_upload_missing_files(self, mock_upload, temp_dir):
         """Test uploading when some files are missing"""
-        # Create only 2 out of 4 files
-        for filename in ["directors.csv", "basic_titles.csv"]:
+        # Create only 1 out of 2 files
+        for filename in ["basic_titles.csv"]:
             file_path = os.path.join(temp_dir, filename)
             with open(file_path, 'w') as f:
                 f.write("test data\n")
@@ -232,10 +231,9 @@ class TestUploadAllDatasets:
         upload_all_datasets("test-bucket", temp_dir)
         
         # Should only attempt to upload existing files
-        assert mock_upload.call_count == 2
+        assert mock_upload.call_count == 1
         
         uploaded_files = [call[0][1] for call in mock_upload.call_args_list]
-        assert "directors.csv" in uploaded_files
         assert "basic_titles.csv" in uploaded_files
     
     @patch.object(GCSUploader, 'upload_file')

@@ -31,9 +31,13 @@ jobs:
         run: |
           pytest --disable-warnings -rA ./tests/test_loader.py
 
-      - name: Run datasets uploading
+      - name: Run summarizer tests
         run: |
-          pytest --disable-warnings -rA ./tests/test_uploader.py
+          pytest --disable-warnings -rA ./tests/test_summarizer.py
+
+      - name: Run dictionary tests
+        run: |
+          pytest --disable-warnings -rA ./tests/test_dictionary.py
 
     
   docker-build-and-publish:

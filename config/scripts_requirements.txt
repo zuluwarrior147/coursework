@@ -6,4 +6,5 @@ apache-airflow-providers-cncf-kubernetes==8.3.3
 google-cloud-storage>=2.0.0
 openai==1.84.0
 pyarrow==20.0.0
-qdrant-client==1.14.2
+psycopg2-binary==2.9.10
+gradio>=4.0.0

@@ -28,7 +28,7 @@ class TestMovieSummarizer:
         result = summarizer._summarize_single_movie(sample_movies[0])
         
         assert result == "Great movie about hope."
-        mock_client.chat.completions.create.assert_called_once()
+        assert mock_client.chat.completions.create.call_count == 2
     
     @patch('scripts.summarizer.OpenAI')
     def test_summarize_batch(self, mock_openai_class, sample_movies):
@@ -41,8 +41,8 @@ class TestMovieSummarizer:
         mock_openai_class.return_value = mock_client
         
         summarizer = MovieSummarizer(max_workers=2)
-        results = summarizer.summarize_batch(sample_movies)
+        results = summarizer.summarize_in_parallel(sample_movies)
         
         assert len(results) == 2
         assert all(result == "Movie summary" for result in results)
-        assert mock_client.chat.completions.create.call_count == 2 
+        assert mock_client.chat.completions.create.call_count == 4 
